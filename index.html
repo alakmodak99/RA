@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    th{
+        border: 1px solid;
+    }
+    td{
+        border: 1px solid;
+    }
+ body{
+    position: relative;
+ }
+ #container0{
+    position: absolute;
+    background: rgb(226, 222, 222);
+   width: 10%;
+   display: flex;
+   flex-wrap: wrap;
+   padding: 10px;
+   gap: 5px;
+   top:10%;
+   right: 50%;
+   display: none;
+ }
+</style>
+<body>
+    <form action="" id="form">
+        <label for="">Select Country</label>
+        <select name="" id="selectCountry">
+            <option value="America">America</option>
+            <option value="India">India</option>
+            <option value="Australia">Australia</option>
+            <option value="Srilanka">Srilanka</option>
+            <option value="China">China</option>
+            <option value="England">England</option>
+        </select>
+<label for="">Enter City</label>
+<input type="text" id="city">
+<label for="">Enter Population</label>
+<input type="number" id="population">
+<input type="submit" name="" id="">
+    </form>
+    <select name="" id="selectFilter">
+        <option value="America">America</option>
+        <option value="India">India</option>
+        <option value="Australia">Australia</option>
+        <option value="Srilanka">Srilanka</option>
+        <option value="China">China</option>
+        <option value="England">England</option>
+    </select>
+    <div id="container">
+        <table>
+<thead>
+    <tr>
+        <th>Id</th>
+        <th>Counthy</th>
+        <th>City</th>
+        <th>Population <button id="Asc">Asc</button> <button id="Dsc">Dsc</button></th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+</thead>
+<tbody id="tbody">
+
+</tbody>
+        
+
+        </table>
+    </div>
+<div id="container0"> 
+       <form action="" id="from0">
+    <label for="">Enter new Counrty Name</label> <br>
+    <select name="" id="selectFilter0">
+        <option value="America">America</option>
+        <option value="India">India</option>
+        <option value="Australia">Australia</option>
+        <option value="Srilanka">Srilanka</option>
+        <option value="China">China</option>
+        <option value="England">England</option>
+    </select>
+    <label for="">Enter new City Name</label> <br>
+    <input type="text" id="City0">
+    <label for="">Enter new Population</label> <br>
+    <input type="text" name="" id="Population0">
+    <input type="submit">
+</form></div>
+</body>
+</html>
+<script>
+    const container= document.getElementById("container")
+  const url="https://m5r3server.herokuapp.com/api/data";
+    document.getElementById("form").addEventListener("submit",(e)=>{
+        e.preventDefault()
+        let obj=
+        {Country: document.getElementById("selectCountry").value,
+        City: document.getElementById("city").value,
+        Population: document.getElementById("population").value
+    }
+
+    createPost(obj)
+    form.reset()
+    
+    })
+
+
+async function createPost(data){
+const config = {
+    method: "POST",
+    headers: {
+        'Content-Type':'application/json'
+    },
+    body: JSON.stringify(data)
+}
+await fetch(url,config)
+.then(res=>response.json()
+)
+}
+
+async function getData(){
+await fetch(url)
+.then(res=>(res.json())
+.then(data=>{CreateTable(data)})
+
+)
+}
+let A=[]
+function CreateTable(arr){
+    A=arr
+    console.log(arr)
+    document.getElementById("tbody").innerHTML=""
+arr.map((e,i)=>{
+    const tr =document.createElement("tr")
+    let id =document.createElement("td")
+    id.textContent=e.id
+    let country =document.createElement("td")
+    country.textContent=e.country
+    let city =document.createElement("td")
+    city.textContent=e.city
+    let population=document.createElement("td")
+    population.textContent=e.population
+    let edit = document.createElement("td")
+    edit.addEventListener("click",()=>{
+   document.getElementById("container0").style.display="block"
+    })
+    edit.textContent="Edit"
+    let del = document.createElement("td")
+    del.style.cursor="pointer"
+    del.addEventListener("click",()=>{
+        console.log(e.id)
+        DeleteData(e.id)
+    })
+    del.textContent="Delete"
+    tr.append(id,country, city, population, edit,del)
+    document.getElementById("tbody").append(tr)
+})
+}
+getData()
+function DeleteData(id) {
+    return fetch(
+      `url/${id}`,
+      {
+        method: "DELETE"
+      }
+    )
+      .then(res => res.json())
+      .then(data=> console.log(data))
+  };
+  document.getElementById("Asc").addEventListener("click",()=>{
+    CreateTable(A.sort((a,b)=>a.population-b.population))
+  })
+  document.getElementById("Dsc").addEventListener("click",()=>{
+    CreateTable(A.sort((a,b)=>b.population-a.population))
+  })
+// async function Sort(str){
+// await fetch(`http://localhost:8080/data?_sort=Population&_order=${str}`)
+// .then(res=>(res.json())
+// .then(data=>{CreateTable(data)})
+// )
+// }
+document.getElementById("selectFilter").addEventListener("change", (e)=>{
+    console.log(e.target.value)
+    Filter(e.target.value)
+})
+async function Filter(str){
+    await fetch(`url?/country=${str}`)
+.then(res=>(res.json())
+.then(data=>{CreateTable(data)})
+
+)
+}
+document.getElementById("form").addEventListener("submit",(e)=>{
+        e.preventDefault()
+        let obj=
+        {Country: document.getElementById("selectCountry").value,
+        City: document.getElementById("city").value,
+        Population: document.getElementById("population").value
+    }
+
+    createPost(obj)
+    form.reset()
+    
+    })
+</script>

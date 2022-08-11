@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "Country": "Srilanka",
+      "City": "Columbo",
+      "Population": "45435",
+      "id": 1
+    },
+    {
+      "Country": "America",
+      "City": "vbghfdhb",
+      "Population": "4545",
+      "id": 2
+    },
+    {
+      "Country": "America",
+      "City": "gfdg",
+      "Population": "45435",
+      "id": 3
+    }
+  ]
+}
