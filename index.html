@@ -94,7 +94,8 @@
 </html>
 <script>
     const container= document.getElementById("container")
-  const url="https://m5r3server.herokuapp.com/api/data";
+  const url="https://demo-server90.herokuapp.com/api/data";
+
     document.getElementById("form").addEventListener("submit",(e)=>{
         e.preventDefault()
         let obj=
@@ -118,14 +119,14 @@ const config = {
     body: JSON.stringify(data)
 }
 await fetch(url,config)
-.then(res=>response.json()
+.then(res=>res.json()
 )
 }
 
 async function getData(){
 await fetch(url)
 .then(res=>(res.json())
-.then(data=>{CreateTable(data)})
+.then(data=>console.log(data))
 
 )
 }
@@ -139,11 +140,11 @@ arr.map((e,i)=>{
     let id =document.createElement("td")
     id.textContent=e.id
     let country =document.createElement("td")
-    country.textContent=e.country
+    country.textContent=e.Country
     let city =document.createElement("td")
-    city.textContent=e.city
+    city.textContent=e.City
     let population=document.createElement("td")
-    population.textContent=e.population
+    population.textContent=e.Population
     let edit = document.createElement("td")
     edit.addEventListener("click",()=>{
    document.getElementById("container0").style.display="block"
@@ -172,10 +173,10 @@ function DeleteData(id) {
       .then(data=> console.log(data))
   };
   document.getElementById("Asc").addEventListener("click",()=>{
-    CreateTable(A.sort((a,b)=>a.population-b.population))
+    CreateTable(A.sort((a,b)=>a.Population-b.Population))
   })
   document.getElementById("Dsc").addEventListener("click",()=>{
-    CreateTable(A.sort((a,b)=>b.population-a.population))
+    CreateTable(A.sort((a,b)=>b.Population-a.Population))
   })
 // async function Sort(str){
 // await fetch(`http://localhost:8080/data?_sort=Population&_order=${str}`)
