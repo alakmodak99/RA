@@ -18,34 +18,55 @@
  }
  #container0{
     position: absolute;
-    background: rgb(226, 222, 222);
+    background: rgb(206, 214, 197);
    width: 10%;
    display: flex;
    flex-wrap: wrap;
+   justify-content: center;
    padding: 10px;
    gap: 5px;
    top:10%;
    right: 50%;
    display: none;
  }
+ #cross{
+    position: absolute;
+    right: 10%;
+    top: 10%;
+    color: rgb(174, 159, 172);
+    background: rgb(28, 97, 12);
+    border: rgb(106, 145, 106);
+ }
+ #container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+ thead> tr > th{
+    background-color: rgb(169, 188, 131);
+ }
+ tr:nth-child(odd){
+    background-color: rgba(189, 219, 225, 0.7);
+ }
 </style>
 <body>
     <form action="" id="form">
-        <label for="">Select Country</label>
-        <select name="" id="selectCountry">
+        <label for="">Select Country</label> 
+        <select name="" id="selectCountry">  
             <option value="America">America</option>
             <option value="India">India</option>
             <option value="Australia">Australia</option>
             <option value="Srilanka">Srilanka</option>
             <option value="China">China</option>
             <option value="England">England</option>
-        </select>
-<label for="">Enter City</label>
-<input type="text" id="city">
-<label for="">Enter Population</label>
-<input type="number" id="population">
-<input type="submit" name="" id="">
-    </form>
+        </select>  
+<label for="">Enter City</label> 
+<input type="text" id="city"> 
+<label for="">Enter Population</label> 
+<input type="number" id="population"> 
+<input type="submit" name="" id=""> 
+    </form>  <br><br>
+    <label for="">Select for filter Country</label> <br>
     <select name="" id="selectFilter">
         <option value="America">America</option>
         <option value="India">India</option>
@@ -59,7 +80,7 @@
 <thead>
     <tr>
         <th>Id</th>
-        <th>Counthy</th>
+        <th>Country</th>
         <th>City</th>
         <th>Population <button id="Asc">Asc</button> <button id="Dsc">Dsc</button></th>
         <th>Edit</th>
@@ -73,28 +94,32 @@
 
         </table>
     </div>
-<div id="container0"> 
-       <form action="" id="from0">
+<div id="container0">  
+    <button id="cross">X</button>
+       <form action="" id="form0">
     <label for="">Enter new Counrty Name</label> <br>
-    <select name="" id="selectFilter0">
+    <select name="" id="selectCountry0">
         <option value="America">America</option>
         <option value="India">India</option>
         <option value="Australia">Australia</option>
         <option value="Srilanka">Srilanka</option>
         <option value="China">China</option>
         <option value="England">England</option>
-    </select>
-    <label for="">Enter new City Name</label> <br>
-    <input type="text" id="City0">
-    <label for="">Enter new Population</label> <br>
-    <input type="text" name="" id="Population0">
+    </select> <br>
+    <label for="">Enter new City Name</label> 
+    <input type="text" id="City0"> <br>
+    <label for="">Enter new Population</label> 
+    <input type="text" id="Population0"> <br>
     <input type="submit">
 </form></div>
 </body>
 </html>
 <script>
+   
     const container= document.getElementById("container")
   const url="https://demo-server90.herokuapp.com/api/data";
+  getData()
+
 
     document.getElementById("form").addEventListener("submit",(e)=>{
         e.preventDefault()
@@ -103,13 +128,12 @@
         City: document.getElementById("city").value,
         Population: document.getElementById("population").value
     }
-
-    createPost(obj)
-    form.reset()
-    
+    if(obj.City !=="" || obj.Country!=="" || obj.Population){
+        createPost(obj)
+        getData()
+    }
+     form.reset()
     })
-
-
 async function createPost(data){
 const config = {
     method: "POST",
@@ -121,22 +145,22 @@ const config = {
 await fetch(url,config)
 .then(res=>res.json()
 )
+getData()
 }
 
 async function getData(){
 await fetch(url)
-.then(res=>(res.json())
-.then(data=>console.log(data))
-
-)
+.then(res=>(res.json()))
+.then(data=>CreateTable(data))
 }
+
 let A=[]
 function CreateTable(arr){
     A=arr
-    console.log(arr)
     document.getElementById("tbody").innerHTML=""
 arr.map((e,i)=>{
-    const tr =document.createElement("tr")
+    if(e.Country!=="" || e.City!=="" || e.Population!==""){
+        const tr =document.createElement("tr")
     let id =document.createElement("td")
     id.textContent=e.id
     let country =document.createElement("td")
@@ -147,7 +171,8 @@ arr.map((e,i)=>{
     population.textContent=e.Population
     let edit = document.createElement("td")
     edit.addEventListener("click",()=>{
-   document.getElementById("container0").style.display="block"
+        Edit(e.id)
+        getData()
     })
     edit.textContent="Edit"
     let del = document.createElement("td")
@@ -155,23 +180,15 @@ arr.map((e,i)=>{
     del.addEventListener("click",()=>{
         console.log(e.id)
         DeleteData(e.id)
+        getData()
     })
     del.textContent="Delete"
     tr.append(id,country, city, population, edit,del)
     document.getElementById("tbody").append(tr)
+    }
+
 })
 }
-getData()
-function DeleteData(id) {
-    return fetch(
-      `url/${id}`,
-      {
-        method: "DELETE"
-      }
-    )
-      .then(res => res.json())
-      .then(data=> console.log(data))
-  };
   document.getElementById("Asc").addEventListener("click",()=>{
     CreateTable(A.sort((a,b)=>a.Population-b.Population))
   })
@@ -189,22 +206,45 @@ document.getElementById("selectFilter").addEventListener("change", (e)=>{
     Filter(e.target.value)
 })
 async function Filter(str){
-    await fetch(`url?/country=${str}`)
+    await fetch(`${url}?Country=${str}`)
 .then(res=>(res.json())
-.then(data=>{CreateTable(data)})
+.then(data=>CreateTable(data))
 
 )
 }
-document.getElementById("form").addEventListener("submit",(e)=>{
+async function DeleteData(i) {   
+    await fetch(`https://demo-server90.herokuapp.com/api/data/${i}`, {
+                    method: 'DELETE',
+            });
+            getData()
+ };
+ function Edit(i){
+    document.getElementById("container0").style.display="block"
+    document.getElementById("form0").addEventListener("submit",(e)=>{
         e.preventDefault()
         let obj=
-        {Country: document.getElementById("selectCountry").value,
-        City: document.getElementById("city").value,
-        Population: document.getElementById("population").value
+        {Country: document.getElementById("selectCountry0").value,
+        City: document.getElementById("City0").value,
+        Population: document.getElementById("Population0").value
     }
-
-    createPost(obj)
-    form.reset()
-    
+  EditData(i,obj)
+    alert("Data updated")
+    getData()
+    document.getElementById("container0").style.display="none"
     })
+ }
+
+function EditData(i,data){
+    fetch(`${url}/${i}`, {
+  method: 'PATCH',
+  body: JSON.stringify(data),
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+  },
+})
+getData()
+}
+document.getElementById("cross").addEventListener("click",()=>{
+    document.getElementById("container0").style.display="none"
+})
 </script>
